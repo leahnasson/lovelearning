@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Daisy's Sociology Quiz 🌸</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --pink: #f472b6;
+  --pink2: #ec4899;
+  --pink-dark: #be185d;
+  --purple: #a855f7;
+  --purple2: #9333ea;
+  --bg: #0f0a1e;
+  --surface: #1a1030;
+  --surface2: #221540;
+  --text: #f8f0ff;
+  --muted: #a78bca;
+  --correct: #34d399;
+  --wrong: #f87171;
+  --option-bg: #2a1a50;
+  --option-border: #3d2a6e;
+}
+
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: hidden;
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(168,85,247,0.25) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 100%, rgba(244,114,182,0.2) 0%, transparent 55%);
+}
+
+.header {
+  width: 100%;
+  max-width: 680px;
+  padding: 2rem 1.5rem 0.5rem;
+  text-align: center;
+}
+
+.logo {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.8rem, 5vw, 2.6rem);
+  font-weight: 900;
+  background: linear-gradient(130deg, #f472b6, #a855f7, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  margin-bottom: 0.3rem;
+}
+
+.tagline { color: var(--muted); font-size: 0.9rem; font-weight: 600; letter-spacing: 0.05em; }
+
+.gcse-badge {
+  display: inline-block;
+  margin-top: 0.6rem;
+  background: linear-gradient(135deg, rgba(244,114,182,0.2), rgba(168,85,247,0.2));
+  border: 1px solid rgba(244,114,182,0.35);
+  color: var(--pink);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.9rem;
+  border-radius: 999px;
+}
+
+.topic-selector {
+  width: 100%;
+  max-width: 680px;
+  padding: 1rem 1.5rem 0.5rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: center;
+}
+
+.topic-btn {
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--option-border);
+  background: var(--surface);
+  color: var(--muted);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.topic-btn:hover { border-color: var(--pink); color: var(--pink); }
+.topic-btn.active {
+  background: linear-gradient(135deg, var(--pink2), var(--purple2));
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 4px 16px rgba(244,114,182,0.35);
+}
+
+.progress-wrap {
+  width: 100%;
+  max-width: 680px;
+  padding: 0.8rem 1.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+}
+
+.progress-track {
+  flex: 1;
+  height: 5px;
+  background: var(--surface2);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--pink), var(--purple));
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(.4,0,.2,1);
+}
+
+.progress-label { font-size: 0.78rem; font-weight: 700; color: var(--muted); white-space: nowrap; }
+.score-display { font-size: 0.78rem; font-weight: 800; color: var(--correct); white-space: nowrap; }
+
+.carousel-outer {
+  width: 100%;
+  max-width: 680px;
+  padding: 1.2rem 1.5rem 2rem;
+  flex: 1;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--option-border);
+  border-radius: 24px;
+  padding: 2rem 2rem 1.5rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(168,85,247,0.1);
+  animation: slideIn 0.35s cubic-bezier(.4,.2,.2,1);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--pink), var(--purple), #60a5fa);
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(40px) scale(0.97); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+@keyframes slideBack {
+  from { opacity: 0; transform: translateX(-40px) scale(0.97); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.card.going-back { animation: slideBack 0.35s cubic-bezier(.4,.2,.2,1); }
+
+.q-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.2rem;
+}
+
+.q-num {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--pink);
+}
+
+.topic-chip {
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.7rem;
+  border-radius: 999px;
+}
+
+.chip-functionalism { background: rgba(244,114,182,0.15); color: #f9a8d4; }
+.chip-marxism { background: rgba(168,85,247,0.15); color: #c4b5fd; }
+.chip-feminism { background: rgba(251,113,133,0.15); color: #fda4af; }
+.chip-family-forms { background: rgba(52,211,153,0.15); color: #6ee7b7; }
+.chip-general { background: rgba(251,191,36,0.15); color: #fcd34d; }
+
+.q-text {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.05rem, 3vw, 1.3rem);
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 1.5rem;
+}
+
+.options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-bottom: 1.4rem;
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  padding: 0.85rem 1rem;
+  background: var(--option-bg);
+  border: 1.5px solid var(--option-border);
+  border-radius: 14px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+
+.option:not(.locked):hover {
+  border-color: var(--pink);
+  background: rgba(244,114,182,0.1);
+  transform: translateX(3px);
+}
+
+.option.locked { cursor: default; }
+
+.option-letter {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+  background: rgba(255,255,255,0.07);
+  border: 1.5px solid var(--option-border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.8rem;
+  font-weight: 800;
+  color: var(--muted);
+  flex-shrink: 0;
+  transition: all 0.18s;
+}
+
+.option-text {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.35;
+  flex: 1;
+}
+
+.option.correct {
+  border-color: var(--correct);
+  background: rgba(52,211,153,0.12);
+  animation: correctPop 0.3s ease;
+}
+
+@keyframes correctPop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.02); }
+  100% { transform: scale(1); }
+}
+
+.option.correct .option-letter { background: var(--correct); border-color: var(--correct); color: white; }
+.option.correct .option-text { color: var(--correct); font-weight: 700; }
+
+.option.wrong {
+  border-color: var(--wrong);
+  background: rgba(248,113,113,0.1);
+  animation: wrongShake 0.35s ease;
+}
+
+@keyframes wrongShake {
+  0%, 100% { transform: translateX(0); }
+  20% { transform: translateX(-5px); }
+  60% { transform: translateX(5px); }
+}
+
+.option.wrong .option-letter { background: var(--wrong); border-color: var(--wrong); color: white; }
+.option.wrong .option-text { color: var(--wrong); }
+
+.explanation {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.45s cubic-bezier(.4,.2,.2,1), opacity 0.3s;
+  opacity: 0;
+}
+
+.explanation.show { max-height: 300px; opacity: 1; }
+
+.explanation-inner {
+  background: linear-gradient(135deg, rgba(168,85,247,0.12), rgba(244,114,182,0.08));
+  border: 1px solid rgba(168,85,247,0.25);
+  border-radius: 14px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1.2rem;
+}
+
+.exp-header {
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--purple);
+  margin-bottom: 0.4rem;
+}
+
+.exp-text {
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: rgba(248,240,255,0.85);
+  line-height: 1.6;
+}
+
+.card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.8rem;
+}
+
+.nav-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.65rem 1.3rem;
+  border-radius: 999px;
+  border: 1.5px solid var(--option-border);
+  background: transparent;
+  color: var(--muted);
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover { border-color: var(--pink); color: var(--pink); }
+.nav-btn:disabled { opacity: 0.3; pointer-events: none; }
+
+.nav-btn-next {
+  background: linear-gradient(135deg, var(--pink2), var(--purple2));
+  border-color: transparent;
+  color: white;
+  box-shadow: 0 4px 18px rgba(244,114,182,0.3);
+}
+
+.nav-btn-next:hover { transform: translateX(2px); box-shadow: 0 6px 24px rgba(244,114,182,0.45); color: white; border-color: transparent; }
+
+.dots {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  justify-content: center;
+  max-width: 200px;
+}
+
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--surface2); transition: all 0.25s; }
+.dot.current { background: var(--pink); transform: scale(1.4); }
+.dot.answered-correct { background: var(--correct); }
+.dot.answered-wrong { background: var(--wrong); }
+
+/* RESULTS */
+.results {
+  display: none;
+  width: 100%;
+  max-width: 680px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.results.show { display: block; animation: popUp 0.5s cubic-bezier(.4,.2,.2,1); }
+
+@keyframes popUp {
+  from { opacity: 0; transform: scale(0.93) translateY(20px); }
+  to { opacity: 1; transform: scale(1) translateY(0); }
+}
+
+.results-card {
+  background: var(--surface);
+  border: 1px solid var(--option-border);
+  border-radius: 28px;
+  padding: 2rem 2rem 2.2rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 0 1px rgba(244,114,182,0.15);
+  position: relative;
+  overflow: hidden;
+}
+
+.results-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--correct), var(--pink), var(--purple), #60a5fa);
+}
+
+/* Stars */
+.stars-row {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-bottom: 1rem;
+  font-size: 1.6rem;
+}
+
+.star { display: inline-block; animation: starPop 0.4s cubic-bezier(.4,.2,.2,1) both; }
+.star:nth-child(1) { animation-delay: 0.1s; }
+.star:nth-child(2) { animation-delay: 0.25s; }
+.star:nth-child(3) { animation-delay: 0.4s; }
+
+@keyframes starPop {
+  from { transform: scale(0) rotate(-30deg); opacity: 0; }
+  to { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+/* Badge */
+.results-badge {
+  font-size: 4rem;
+  margin-bottom: 0.6rem;
+  display: block;
+  animation: badgeBounce 0.6s cubic-bezier(.4,.2,.2,1) 0.2s both;
+}
+
+@keyframes badgeBounce {
+  0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+  60% { transform: scale(1.15) rotate(3deg); opacity: 1; }
+  100% { transform: scale(1) rotate(0); opacity: 1; }
+}
+
+.results-title {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(1.8rem, 5vw, 2.4rem);
+  font-weight: 900;
+  background: linear-gradient(130deg, #f472b6, #a855f7, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1.1;
+  margin-bottom: 0.25rem;
+}
+
+.results-subtitle {
+  font-family: 'Fraunces', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--pink);
+  margin-bottom: 0.7rem;
+  opacity: 0.9;
+}
+
+.results-msg {
+  color: var(--muted);
+  font-size: 0.92rem;
+  line-height: 1.55;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  max-width: 380px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Big score ring */
+.big-score-wrap {
+  position: relative;
+  width: 130px;
+  height: 130px;
+  margin: 0 auto 1.5rem;
+}
+
+.score-ring { width: 130px; height: 130px; }
+
+.big-score-inner {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.big-pct {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--pink), var(--purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+}
+
+.big-pct-lbl {
+  font-size: 0.65rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  margin-top: 0.1rem;
+}
+
+.score-grid {
+  display: flex;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-bottom: 1.8rem;
+  flex-wrap: wrap;
+}
+
+.score-box {
+  background: var(--surface2);
+  border-radius: 16px;
+  padding: 0.9rem 1.2rem;
+  min-width: 90px;
+  border: 1px solid var(--option-border);
+}
+
+.score-big { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; line-height: 1; }
+.score-big.green { color: var(--correct); }
+.score-big.red { color: var(--wrong); }
+.score-big.gold { color: #fbbf24; }
+.score-lbl { font-size: 0.68rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin-top: 0.3rem; }
+
+.results-actions { display: flex; gap: 0.8rem; justify-content: center; flex-wrap: wrap; }
+
+.btn-main {
+  padding: 0.75rem 1.8rem;
+  border-radius: 999px;
+  border: none;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-gradient {
+  background: linear-gradient(135deg, var(--pink2), var(--purple2));
+  color: white;
+  box-shadow: 0 4px 18px rgba(244,114,182,0.3);
+}
+
+.btn-gradient:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(244,114,182,0.4); }
+
+.btn-outline {
+  background: transparent;
+  border: 1.5px solid var(--option-border);
+  color: var(--muted);
+}
+
+.btn-outline:hover { border-color: var(--pink); color: var(--pink); }
+
+.swipe-hint {
+  text-align: center;
+  color: rgba(167,139,202,0.4);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  padding: 0.5rem;
+}
+
+@media (max-width: 480px) {
+  .card { padding: 1.5rem 1.2rem 1.2rem; }
+  .option { padding: 0.7rem 0.85rem; }
+  .nav-btn { padding: 0.55rem 1rem; font-size: 0.8rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">Hey Daisy! 🌸</div>
+  <div class="tagline">Sociology Revision Quiz</div>
+  <div class="gcse-badge">AQA GCSE Sociology</div>
+</div>
+
+<div class="topic-selector">
+  <button class="topic-btn active" onclick="setTopic('all',this)">All 50 Questions</button>
+  <button class="topic-btn" onclick="setTopic('functionalism',this)">Functionalism</button>
+  <button class="topic-btn" onclick="setTopic('marxism',this)">Marxism</button>
+  <button class="topic-btn" onclick="setTopic('feminism',this)">Feminism</button>
+  <button class="topic-btn" onclick="setTopic('family-forms',this)">Family Forms</button>
+  <button class="topic-btn" onclick="setTopic('general',this)">Key Concepts</button>
+</div>
+
+<div class="progress-wrap" id="progress-wrap">
+  <div class="progress-track"><div class="progress-fill" id="progress-fill" style="width:0%"></div></div>
+  <div class="progress-label" id="progress-label">1 / 50</div>
+  <div class="score-display" id="score-display">✓ 0</div>
+</div>
+
+<div class="carousel-outer" id="carousel-outer">
+  <div class="card" id="card"></div>
+  <div class="swipe-hint">Use ← → arrow keys or tap buttons to navigate</div>
+</div>
+
+<!-- Confetti canvas -->
+<canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:999;display:none;"></canvas>
+
+<div class="results" id="results">
+  <div class="results-card">
+
+    <!-- Stars row -->
+    <div class="stars-row" id="stars-row"></div>
+
+    <div class="results-badge" id="res-badge">🏆</div>
+    <div class="results-title" id="res-title">Well Done, Daisy!</div>
+    <div class="results-subtitle" id="res-subtitle">Keep It Up! 🌸</div>
+    <div class="results-msg" id="res-msg"></div>
+
+    <!-- Big score circle -->
+    <div class="big-score-wrap">
+      <svg class="score-ring" viewBox="0 0 120 120">
+        <circle cx="60" cy="60" r="52" fill="none" stroke="rgba(168,85,247,0.15)" stroke-width="10"/>
+        <circle id="score-ring-fill" cx="60" cy="60" r="52" fill="none" stroke="url(#ringGrad)" stroke-width="10"
+          stroke-linecap="round" stroke-dasharray="326.7" stroke-dashoffset="326.7"
+          transform="rotate(-90 60 60)" style="transition: stroke-dashoffset 1.2s cubic-bezier(.4,.2,.2,1)"/>
+        <defs>
+          <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#ec4899"/>
+            <stop offset="100%" stop-color="#a855f7"/>
+          </linearGradient>
+        </defs>
+      </svg>
+      <div class="big-score-inner">
+        <div class="big-pct" id="res-pct">0%</div>
+        <div class="big-pct-lbl">Score</div>
+      </div>
+    </div>
+
+    <div class="score-grid">
+      <div class="score-box"><div class="score-big green" id="res-correct">0</div><div class="score-lbl">✅ Correct</div></div>
+      <div class="score-box"><div class="score-big red" id="res-wrong">0</div><div class="score-lbl">❌ Wrong</div></div>
+      <div class="score-box"><div class="score-big gold" id="res-total">0</div><div class="score-lbl">📝 Total</div></div>
+    </div>
+
+    <div class="results-actions">
+      <button class="btn-main btn-gradient" onclick="retryAll()">🔁 Try Again</button>
+      <button class="btn-main btn-outline" onclick="retryWrong()">❌ Redo Wrong Ones</button>
+      <button class="btn-main btn-outline" onclick="shuffleRestart()">🔀 Shuffle</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const ALL_QUESTIONS = [
+  {topic:'functionalism',q:'What do functionalists see society as?',options:['A system of conflict','A system of interdependent parts','A random structure','A capitalist system'],correct:1,ex:'Functionalists view society like a living organism — every institution (family, education, economy) has a role to play. They all work together to maintain stability and social order.'},
+  {topic:'general',q:'What is value consensus?',options:['Disagreement between groups','Shared values across society','Economic conflict','A power struggle'],correct:1,ex:'Value consensus means people in society agree on core values (e.g. hard work, respect). Functionalists argue this agreement is what holds society together — the family transmits these values through primary socialisation.'},
+  {topic:'functionalism',q:'Who developed functionalism further in the 1950s?',options:['Marx','Durkheim','Parsons','Weber'],correct:2,ex:"Talcott Parsons (1959) built on earlier functionalist ideas and argued the nuclear family performs two irreducible functions: primary socialisation of children, and stabilisation of adult personalities (the 'warm bath' theory)."},
+  {topic:'functionalism',q:'What is a functional prerequisite?',options:['An optional need of society','A basic need society must meet to survive','A type of social conflict','A law passed by the state'],correct:1,ex:'Functionalists argue society has basic needs it must meet to survive — such as reproducing and transmitting culture. The family is the key institution that meets many of these prerequisites.'},
+  {topic:'general',q:'What is social order?',options:['Chaos and disorder','Structured, stable organisation of society','Economic conflict','Individual freedom'],correct:1,ex:'Social order means society runs in a predictable, stable way — people follow norms and values and institutions function smoothly. Functionalists see the family as essential for maintaining social order through socialisation.'},
+  {topic:'marxism',q:'What is capitalism?',options:['State ownership of all businesses','Private ownership of businesses for profit','A system of complete equality','A type of religion'],correct:1,ex:"Capitalism is an economic system where businesses are privately owned and run for profit. Marxists argue capitalism creates class inequality — the ruling class (bourgeoisie) profit from workers' (proletariat's) labour."},
+  {topic:'marxism',q:'Who are the bourgeoisie?',options:['The working class','The ruling/owning class','Agricultural workers','Teachers and professionals'],correct:1,ex:"The bourgeoisie are the capitalist ruling class who own the means of production (factories, businesses). They make profit from workers' labour. Marxists argue the family helps maintain their power by socialising acceptance of the system."},
+  {topic:'marxism',q:'Who are the proletariat?',options:['The ruling class','The working class','Politicians','Scientists'],correct:1,ex:'The proletariat are the working class who sell their labour for wages. Marxists argue workers are exploited — they produce more value than they are paid. The family reproduces the next generation of workers for capitalism.'},
+  {topic:'marxism',q:'What is false consciousness?',options:['True political awareness','A belief system that hides exploitation and inequality','A legal system','A type of education'],correct:1,ex:"False consciousness is when the working class accepts capitalism as natural and fair — not realising they're being exploited. Marxists argue the family socialises this acceptance, teaching children to respect authority and hierarchy."},
+  {topic:'marxism',q:'What shapes the superstructure according to Marx?',options:['Culture and religion','The economy (base)','Religion alone','Individual choices'],correct:1,ex:"For Marx, the economic base (who owns production) shapes the superstructure — all social institutions like family, education, religion, and law. The family exists to serve capitalism's economic needs."},
+  {topic:'general',q:'What is labelling (interactionism)?',options:['A form of punishment','Assigning a defining identity or characteristic to someone','A type of education system','A method of social control'],correct:1,ex:'Labelling theory says we respond to people based on labels given to them rather than actual behaviour. A label can stick and affect how others treat someone — and how they see themselves.'},
+  {topic:'general',q:'What is self-concept?',options:["Your idea of other people's identity","Your own sense of who you are",'A legal identity','A type of social power'],correct:1,ex:"Self-concept is your internal sense of who you are. Interactionists argue it is shaped by how others label and treat you — especially during early socialisation in the family."},
+  {topic:'general',q:'What is master status?',options:['A minor social role','A dominant label that overrides all other aspects of identity','A professional job title','A type of law'],correct:1,ex:"Master status is when one label dominates how others see you above everything else. E.g. being labelled a 'single mother' or 'criminal' becomes a master status — people only see that one thing about you."},
+  {topic:'general',q:'What is a self-fulfilling prophecy?',options:['A prediction about the future','Behaviour that confirms a label placed on someone','A legal term','A conflict between groups'],correct:1,ex:"When someone is labelled (e.g. 'troublemaker'), they may internalise it and act accordingly — fulfilling the original prediction. This matters in family socialisation where labels like 'difficult child' can shape behaviour."},
+  {topic:'general',q:'What is negotiation in interactionist theory?',options:['A form of legal control','The process of challenging and changing labels','A punishment system','A type of conflict'],correct:1,ex:'Interactionists argue that labels are not fixed — they can be challenged and renegotiated. E.g. someone labelled negatively can resist that label or change how others perceive them over time.'},
+  {topic:'feminism',q:'What is patriarchy?',options:['A system of female dominance','A system where men hold power and dominate women','A completely equal society','A religious institution'],correct:1,ex:"Patriarchy describes a society organised around male power. Feminists argue the family is a key site of patriarchy — reinforcing it through gender role socialisation, unpaid domestic labour, and power imbalances."},
+  {topic:'feminism',q:'What do radical feminists want?',options:['Minor, gradual reforms','Fundamental, major change to society','No change at all','A return to tradition'],correct:1,ex:"Radical feminists argue patriarchy is so deeply embedded that only fundamental change will end women's oppression. Some advocate separatism or dismantling traditional family structures entirely."},
+  {topic:'feminism',q:'What do liberal feminists want?',options:['A socialist revolution','Gradual reform through law and education','No change to society','Complete separation from men'],correct:1,ex:'Liberal feminists believe gender equality can be achieved through legal reform (equal pay, maternity rights) and changing attitudes through education — without needing to overthrow the whole system.'},
+  {topic:'general',q:'What is culture of dependency?',options:['Strong personal independence','Reliance on welfare benefits instead of seeking work','A culture of hard work','Complete financial freedom'],correct:1,ex:"A New Right concept — argues some people become dependent on benefits rather than working. Critics say this victim-blames the poor and ignores structural causes of poverty like unemployment and low wages."},
+  {topic:'general',q:'Who developed the culture of poverty concept?',options:['Marx','Oscar Lewis','Max Weber','Émile Durkheim'],correct:1,ex:"Oscar Lewis argued that a 'culture of poverty' develops among the very poor — values and behaviours (e.g. fatalism, living for the present) passed down through families that maintain poverty across generations."},
+  {topic:'general',q:'What is the underclass?',options:['The middle class','The lowest social group — often long-term unemployed','The economic elite','The skilled working class'],correct:1,ex:"The underclass refers to the lowest social stratum — typically people in long-term poverty or welfare dependency. New Right thinkers like Charles Murray blamed family breakdown for creating this group."},
+  {topic:'family-forms',q:'What is a nuclear family?',options:['A large multi-generational family','Parents and their dependent children','An extended family with grandparents','A group of friends living together'],correct:1,ex:"The nuclear family (two parents and their children) remains the most common family type in the UK. However, functionalists like Parsons have been criticised for treating this as the only 'normal' family form."},
+  {topic:'family-forms',q:'What is a lone parent family?',options:['A family with two parents','A single parent raising children — due to death, divorce, or choice','An extended family','A group household'],correct:1,ex:'Lone parent families have increased significantly since the 1970s, largely due to rising divorce rates and changing attitudes. The majority are headed by mothers, though the number of single fathers is growing.'},
+  {topic:'family-forms',q:'What is a reconstituted family?',options:['A completely new family with no prior children','A blended family — two adults with children from previous relationships','An older, traditional family','A family that has separated'],correct:1,ex:"Also called a 'step-family', reconstituted families form when two adults with children from previous relationships come together. They have become more common as divorce and remarriage increased."},
+  {topic:'family-forms',q:'What is family diversity?',options:['All families being the same structure','The wide range of different family types in contemporary society','A conflict between family members','A legal definition of family'],correct:1,ex:'Family diversity has increased over the past 60 years due to rising divorce, cohabitation, same-sex partnerships, and cultural variation. The Rapoports identified five types: organisational, cultural, class, life cycle, and cohort.'},
+  {topic:'family-forms',q:'What is cohabitation?',options:['A legal marriage','Partners living together without being married','An arranged marriage','Divorce between partners'],correct:1,ex:'Cohabitation (living together unmarried) has risen dramatically since the 1970s. It is now very common before or instead of marriage — especially among younger generations. It reflects changing attitudes to relationships.'},
+  {topic:'family-forms',q:'What is a beanpole family?',options:['A wide family with many members per generation','A family spanning many generations but with few members in each','A very large extended family','A small nuclear family'],correct:1,ex:"As people live longer but have fewer children, families become 'tall and thin' like a beanpole. There may be four generations alive simultaneously (great-grandparents to grandchildren) but only one or two children per generation."},
+  {topic:'family-forms',q:'What is a household?',options:['Only the nuclear family','Any group of people sharing the same home','A school or community group','Only people related by blood'],correct:1,ex:"A household = people sharing a home. This is different from a family — you can share a house with friends without being a family, and family members may live in different households (e.g. divorced parents)."},
+  {topic:'family-forms',q:'What is organisational diversity (Rapoport)?',options:['Differences in family culture','Differences in family structure and internal organisation','Differences caused by class','Differences across generations'],correct:1,ex:'Organisational diversity refers to differences in how families are structured — e.g. dual-earner, lone-parent, cohabiting, or reconstituted. Changes in marriage and divorce rates have created this variety.'},
+  {topic:'family-forms',q:'What is cultural diversity (Rapoport)?',options:['Class differences in families','Differences in family practices across ethnic, cultural, and religious groups','Generational differences','Structural differences'],correct:1,ex:"E.g. South Asian families may practise arranged marriages; Catholic families historically had larger families due to opposition to contraception. Sociologists warn against stereotypes though — minority families are also changing rapidly."},
+  {topic:'family-forms',q:'What is life cycle diversity (Rapoport)?',options:['Differences across generations in history','Differences in family structure at different life stages','Class-based differences','Ethnic differences'],correct:1,ex:"Families change structure as they pass through stages: having a baby, children leaving home (empty nest), retirement. Priorities and roles shift at each stage. ONS (2018) found 1 in 7 fathers are now the main child-carer."},
+  {topic:'family-forms',q:'What is cohort diversity (Rapoport)?',options:['Cultural differences in family','Differences shaped by the historical period a generation lives through','Class differences','Differences in family structure'],correct:1,ex:'Different generations are shaped by major historical events. E.g. the World Wars created more single-parent households; the Great Depression reduced birth rates. Each cohort has different attitudes to marriage and family.'},
+  {topic:'family-forms',q:'What did Chester (1985) argue about the family?',options:['Families are in terminal decline','Families have adapted — the neo-conventional dual-earner family is the new norm','The nuclear family is completely dead','Families are becoming more diverse and radical'],correct:1,ex:"Chester accepted some changes but argued families haven't fundamentally changed — they've adapted. He said the key shift since the 1950s is the rise of 'neo-conventional' dual-earner families where both partners work."},
+  {topic:'family-forms',q:'What is a neo-conventional family?',options:['A single parent family','A dual-earner nuclear family where both partners work','An extended multi-generational family','A same-sex family'],correct:1,ex:"Chester's term for the modern nuclear family — where both partners work rather than the traditional male breadwinner model. He argued this shows adaptation, not fundamental change, and that the nuclear family remains dominant."},
+  {topic:'general',q:'What is primary socialisation?',options:['Learning at school through teachers','Early learning of norms and values within the family','Learning at work or through media','Adult education and training'],correct:1,ex:"Primary socialisation is the first and most crucial stage of learning — happening in the family. Children learn language, acceptable behaviour, cultural norms and values from parents. It's the foundation for all later socialisation."},
+  {topic:'general',q:'What is secondary socialisation?',options:['Early family learning','Later learning through school, peers, media and work','Learning in hospitals','Learning through religion only'],correct:1,ex:"Secondary socialisation happens after primary socialisation and continues throughout life. Schools, peer groups, media, and workplaces all reinforce or add to the norms and values first learned in the family."},
+  {topic:'general',q:'What is culture?',options:['A type of law','The shared way of life of a group — norms, values, customs, language','A form of conflict','Individual beliefs only'],correct:1,ex:"Culture includes everything from language, religion, food, and fashion to values and traditions. The family is the primary institution through which culture is passed on to the next generation through socialisation."},
+  {topic:'general',q:'What are norms?',options:['Personal opinions and preferences','Unwritten rules of expected behaviour in society','Laws enforced by the state','Religious commandments only'],correct:1,ex:"Norms are unwritten rules that guide behaviour in specific situations — e.g. queuing, not shouting in libraries. They're enforced through social pressure (disapproval, embarrassment) rather than formal law."},
+  {topic:'general',q:'What are values?',options:['Strict legal rules','Beliefs about what is important and worthwhile in society','Unimportant individual preferences','Economic systems'],correct:1,ex:"Values are broad beliefs about what matters — e.g. hard work, equality, freedom. The family transmits values to children through primary socialisation, shaping what they believe is right and important."},
+  {topic:'general',q:'What is socialisation?',options:['A form of punishment','The process of learning norms, values and culture','A type of political system','An economic process'],correct:1,ex:"Socialisation is how individuals learn the norms, values, and culture of their society. Without it, people couldn't participate in society. It happens in primary (family) and secondary (school, media) stages."},
+  {topic:'general',q:'What is anomie?',options:['A state of perfect social order','A state of normlessness where social norms break down','A type of legal control','Strong social cohesion'],correct:1,ex:"Durkheim coined anomie to describe a breakdown of social norms — leaving individuals feeling lost and disconnected. He linked it to higher suicide and crime rates. The family helps prevent anomie by providing structure and shared values."},
+  {topic:'functionalism',q:'What did Durkheim believe about crime?',options:['Crime is always harmful and must be eliminated','Crime is normal and even functional for society','Crime is rare in healthy societies','Crime is only caused by poverty'],correct:1,ex:"Durkheim argued crime is inevitable and even necessary — it helps society define its boundaries (what is acceptable), allows social change, and reinforces shared values when criminals are publicly punished."},
+  {topic:'marxism',q:'What did Marx believe drives historical change?',options:['Cultural shifts and new ideas','Class conflict between the bourgeoisie and proletariat','Individual great leaders','Religious movements'],correct:1,ex:"Marx argued history moves through class conflict — the tension between those who own production and those who work for them. He predicted this conflict would eventually lead to revolution and a classless society."},
+  {topic:'marxism',q:'What is alienation (Marx)?',options:['A deep sense of connection to work','Feeling disconnected and unfulfilled from work under capitalism','A type of social promotion','A religious experience'],correct:1,ex:"Marx argued capitalist work alienates workers — they have no control over what they make or the process. They simply follow orders for someone else's profit. This disconnects workers from their labour and each other."},
+  {topic:'general',q:'What did Weber focus on in his sociology?',options:['Class and economics only','Ideas, values, and meanings — not just economics','Law and politics only','The role of the family only'],correct:1,ex:"Weber argued sociology must understand the meanings people attach to their actions — not just economic structures. He saw ideas and values (like the Protestant work ethic) as equally important drivers of social change."},
+  {topic:'general',q:'What is rationalisation (Weber)?',options:['Emotional decision-making','Organising society around efficiency, logic and calculation','A religious process','A form of social conflict'],correct:1,ex:"Weber argued modern society is increasingly 'rationalised' — everything is organised for maximum efficiency and calculability. E.g. bureaucracies, hospitals, businesses. He saw this as a key feature of modern capitalism."},
+  {topic:'general',q:'What is authority?',options:['Simply physical force','Legitimate power — power people accept as right and just','Informal social pressure','Economic dominance only'],correct:1,ex:"Authority is power that is accepted as legitimate. Weber identified three types: traditional (inherited), charismatic (based on personal qualities), and legal-rational (based on rules — dominant in modern societies)."},
+  {topic:'general',q:'What is consensus theory?',options:['A theory focused on conflict and inequality','A theory that society is held together by shared agreement and values','A theory of individual behaviour only','A Marxist economic theory'],correct:1,ex:"Consensus theories (like functionalism) argue society works because people share common values and agree on basic rules. This contrasts with conflict theories (like Marxism) which see society as held together by power and coercion."},
+  {topic:'family-forms',q:'Who were the Rapoports?',options:['Functionalists who supported the nuclear family','Family diversity theorists — argued diversity was becoming the norm','Marxists focused on class','Feminist theorists focused on gender'],correct:1,ex:"Robert Rapoport (1927–1996) and Rhona Rapoport (1927–2011) were among the first sociologists to study family diversity seriously. They identified five types and argued there is no single 'right' family type."},
+  {topic:'family-forms',q:'What did Chester argue about families?',options:['That families were in sharp decline','That families are adapting to modern life, not fundamentally changing','That the nuclear family is completely dead','That family diversity is a serious problem'],correct:1,ex:"Chester (1985) argued that sociologists over-exaggerate family change. Most people still live in nuclear or neo-conventional families. The main shift is that both partners now work — but the basic family structure remains stable."},
+];
+
+let activeQuestions = [];
+let currentIndex = 0;
+let answers = [];
+let selectedWrong = {};
+
+function setTopic(topic, btn) {
+  document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeQuestions = topic === 'all' ? [...ALL_QUESTIONS] : ALL_QUESTIONS.filter(q => q.topic === topic);
+  restart();
+}
+
+function restart() {
+  currentIndex = 0;
+  answers = new Array(activeQuestions.length).fill(null);
+  selectedWrong = {};
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('carousel-outer').style.display = '';
+  document.getElementById('progress-wrap').style.display = '';
+  renderCard();
+}
+
+function shuffleRestart() {
+  activeQuestions = activeQuestions.sort(() => Math.random() - 0.5);
+  restart();
+}
+
+function retryAll() { restart(); }
+
+function retryWrong() {
+  const wrong = activeQuestions.filter((_, i) => answers[i] === false);
+  if (!wrong.length) { restart(); return; }
+  activeQuestions = wrong;
+  restart();
+}
+
+function renderCard(dir) {
+  const total = activeQuestions.length;
+  const q = activeQuestions[currentIndex];
+  const answered = answers.filter(a => a !== null).length;
+  const correct = answers.filter(a => a === true).length;
+
+  document.getElementById('progress-fill').style.width = (answered / total * 100) + '%';
+  document.getElementById('progress-label').textContent = `${currentIndex + 1} / ${total}`;
+  document.getElementById('score-display').textContent = `✓ ${correct}`;
+
+  const chipClass = 'chip-' + q.topic;
+  const chipLabel = {
+    'functionalism':'Functionalism',
+    'marxism':'Marxism',
+    'feminism':'Feminism',
+    'family-forms':'Family Forms',
+    'general':'Key Concepts'
+  }[q.topic] || '';
+
+  const letters = ['A','B','C','D'];
+  const isAnswered = answers[currentIndex] !== null;
+
+  const optionsHTML = q.options.map((opt, i) => {
+    let cls = 'option';
+    if (isAnswered) {
+      cls += ' locked';
+      if (i === q.correct) cls += ' correct';
+      else if (selectedWrong[currentIndex] === i) cls += ' wrong';
+    }
+    return `<div class="${cls}" onclick="pickAnswer(${i})">
+      <div class="option-letter">${letters[i]}</div>
+      <div class="option-text">${opt}</div>
+    </div>`;
+  }).join('');
+
+  const resultIcon = answers[currentIndex] === true ? '✅' : answers[currentIndex] === false ? '❌' : '💡';
+  const expClass = isAnswered ? 'explanation show' : 'explanation';
+
+  const dotsHTML = activeQuestions.map((_, i) => {
+    let cls = 'dot';
+    if (i === currentIndex) cls += ' current';
+    else if (answers[i] === true) cls += ' answered-correct';
+    else if (answers[i] === false) cls += ' answered-wrong';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+
+  const card = document.getElementById('card');
+  card.className = 'card' + (dir === 'back' ? ' going-back' : '');
+
+  card.innerHTML = `
+    <div class="q-meta">
+      <div class="q-num">Q${currentIndex + 1} of ${total}</div>
+      <div class="topic-chip ${chipClass}">${chipLabel}</div>
+    </div>
+    <div class="q-text">${q.q}</div>
+    <div class="options">${optionsHTML}</div>
+    <div class="${expClass}">
+      <div class="explanation-inner">
+        <div class="exp-header">${resultIcon} Explanation</div>
+        <div class="exp-text">${q.ex}</div>
+      </div>
+    </div>
+    <div class="card-footer">
+      <button class="nav-btn" onclick="goBack()" ${currentIndex === 0 ? 'disabled' : ''}>← Back</button>
+      <div class="dots">${dotsHTML}</div>
+      <button class="nav-btn nav-btn-next" onclick="goNext()">${currentIndex === total - 1 ? 'Finish 🎉' : 'Next →'}</button>
+    </div>`;
+}
+
+function pickAnswer(idx) {
+  if (answers[currentIndex] !== null) return;
+  const q = activeQuestions[currentIndex];
+  const isCorrect = idx === q.correct;
+  answers[currentIndex] = isCorrect;
+  if (!isCorrect) selectedWrong[currentIndex] = idx;
+
+  const optEls = document.querySelectorAll('.option');
+  optEls.forEach((el, i) => {
+    el.classList.add('locked');
+    if (i === q.correct) el.classList.add('correct');
+  });
+  if (!isCorrect) optEls[idx].classList.add('wrong');
+
+  // Show explanation
+  document.querySelector('.explanation').classList.add('show');
+  const header = document.querySelector('.exp-header');
+  if (header) header.textContent = (isCorrect ? '✅' : '❌') + ' Explanation';
+
+  // Update stats
+  const total = activeQuestions.length;
+  const answered = answers.filter(a => a !== null).length;
+  const correct = answers.filter(a => a === true).length;
+  document.getElementById('progress-fill').style.width = (answered / total * 100) + '%';
+  document.getElementById('score-display').textContent = `✓ ${correct}`;
+
+  // Update dot
+  const dots = document.querySelectorAll('.dot');
+  if (dots[currentIndex]) {
+    dots[currentIndex].classList.remove('current');
+    dots[currentIndex].classList.add(isCorrect ? 'answered-correct' : 'answered-wrong');
+  }
+}
+
+function goNext() {
+  if (currentIndex < activeQuestions.length - 1) {
+    currentIndex++;
+    renderCard('forward');
+  } else {
+    showResults();
+  }
+}
+
+function goBack() {
+  if (currentIndex > 0) {
+    currentIndex--;
+    renderCard('back');
+  }
+}
+
+function showResults() {
+  const total = activeQuestions.length;
+  const correct = answers.filter(a => a === true).length;
+  const wrong = answers.filter(a => a === false).length;
+  const pct = Math.round(correct / total * 100);
+
+  document.getElementById('carousel-outer').style.display = 'none';
+  document.getElementById('progress-wrap').style.display = 'none';
+
+  const badge = pct >= 90 ? '🏆' : pct >= 70 ? '🎉' : pct >= 50 ? '💪' : '📚';
+  const numStars = pct >= 90 ? 3 : pct >= 70 ? 2 : 1;
+  const starsHTML = Array(numStars).fill('<span class="star">⭐</span>').join('');
+
+  document.getElementById('res-badge').textContent = badge;
+  document.getElementById('stars-row').innerHTML = starsHTML;
+  document.getElementById('res-title').textContent = pct >= 70 ? 'Well Done, Daisy!' : 'Keep Going, Daisy!';
+  document.getElementById('res-subtitle').textContent =
+    pct >= 90 ? 'Absolutely Smashed It! 🌟' :
+    pct >= 70 ? 'Keep It Up! 🌸' :
+    pct >= 50 ? "You've Got This! 💕" : 'Every Try Gets Better! 📚';
+  document.getElementById('res-msg').textContent =
+    pct >= 90 ? "Incredible work — you nailed every question! You're ready for the exam. 🌟" :
+    pct >= 70 ? "Really impressive! You clearly know your sociology. Keep reviewing and you'll smash it! 💕" :
+    pct >= 50 ? "Good effort! Read through the explanations carefully and give it another go — you're nearly there! 🌸" :
+    "Don't worry at all — use the explanations to help you learn and try again. You've got this! 📚";
+  document.getElementById('res-correct').textContent = correct;
+  document.getElementById('res-wrong').textContent = wrong;
+  document.getElementById('res-total').textContent = total;
+  document.getElementById('res-pct').textContent = pct + '%';
+  document.getElementById('results').classList.add('show');
+
+  // Animate score ring
+  setTimeout(() => {
+    const circumference = 326.7;
+    const offset = circumference - (pct / 100) * circumference;
+    document.getElementById('score-ring-fill').style.strokeDashoffset = offset;
+  }, 200);
+
+  // Launch confetti if score good enough
+  if (pct >= 50) launchConfetti();
+}
+
+function launchConfetti() {
+  const canvas = document.getElementById('confetti-canvas');
+  canvas.style.display = 'block';
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+
+  const colors = ['#f472b6','#a855f7','#34d399','#60a5fa','#fbbf24','#fb923c','#f8f0ff'];
+  const pieces = Array.from({length: 120}, () => ({
+    x: Math.random() * canvas.width,
+    y: Math.random() * -canvas.height,
+    r: Math.random() * 7 + 4,
+    d: Math.random() * 80 + 20,
+    color: colors[Math.floor(Math.random() * colors.length)],
+    tilt: Math.random() * 10 - 5,
+    tiltAngle: 0,
+    tiltSpeed: Math.random() * 0.1 + 0.05,
+    speed: Math.random() * 3 + 2,
+    shape: Math.random() > 0.5 ? 'circle' : 'rect',
+    opacity: 1,
+  }));
+
+  let frame = 0;
+  const maxFrames = 220;
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    pieces.forEach(p => {
+      ctx.save();
+      ctx.globalAlpha = p.opacity;
+      ctx.fillStyle = p.color;
+      ctx.translate(p.x + p.tilt, p.y);
+      if (p.shape === 'circle') {
+        ctx.beginPath();
+        ctx.arc(0, 0, p.r, 0, Math.PI * 2);
+        ctx.fill();
+      } else {
+        ctx.fillRect(-p.r, -p.r * 0.5, p.r * 2, p.r);
+      }
+      ctx.restore();
+
+      p.y += p.speed;
+      p.tiltAngle += p.tiltSpeed;
+      p.tilt = Math.sin(p.tiltAngle) * 12;
+      if (frame > maxFrames * 0.6) p.opacity -= 0.012;
+    });
+    frame++;
+    if (frame < maxFrames) {
+      requestAnimationFrame(draw);
+    } else {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      canvas.style.display = 'none';
+    }
+  }
+  draw();
+}
+
+// Keyboard support
+document.addEventListener('keydown', e => {
+  if (document.getElementById('carousel-outer').style.display === 'none') return;
+  if (e.key === 'ArrowRight') goNext();
+  if (e.key === 'ArrowLeft') goBack();
+  if (e.key === '1') pickAnswer(0);
+  if (e.key === '2') pickAnswer(1);
+  if (e.key === '3') pickAnswer(2);
+  if (e.key === '4') pickAnswer(3);
+});
+
+// Init
+activeQuestions = [...ALL_QUESTIONS];
+answers = new Array(activeQuestions.length).fill(null);
+renderCard();
+</script>
+</body>
+</html>
